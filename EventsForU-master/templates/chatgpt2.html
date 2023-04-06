@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>EventBOT (ChatBot for Eventify using OpenAI Api)</title>
+  <!-- Include Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <div class="container mt-5">
+    <h1 class="text-center">EventBOT (ChatBot for Eventify using OpenAI Api)</h1>
+    <div id="chatbox" class="mt-4"></div>
+    <div class="input-group mt-4">
+      <input type="text" id="userInput" class="form-control" placeholder="Type your message...">
+      <div class="input-group-append">
+        <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Include Bootstrap and JavaScript dependencies -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    // Define the API endpoint and parameters
+    var apiUrl = 'https://api.openai.com/v1/engines/davinci/completions';
+    var apiKey = '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'; // Replace with your actual OpenAI API key
+
+    // Function to send user message and get bot response
+    function sendMessage() {
+      var userInput = $('#userInput').val();
+      $('#chatbox').append('<p class="text-right">You: ' + userInput + '</p>');
+
+      // Make API request
+      $.ajax({
+        url: apiUrl,
+        type: 'POST',
+        beforeSend: function(xhr) {
+          xhr.setRequestHeader('Authorization', 'Bearer ' + apiKey);
+          xhr.setRequestHeader('Content-Type', 'application/json');
+        },
+        data: JSON.stringify({
+          prompt: 'User: ' + userInput + '\nBot:',
+          max_tokens: 50
+        }),
+        success: function(data) {
+          // Handle API response
+          var botResponse = data.choices[0].text.trim();
+          console.log('botres-',botResponse);
+          $('#chatbox').append('<p>EventBot: ' + botResponse + '</p>');
+        },
+        error: function(xhr, status, error) {
+          console.error('Error:', error);
+        }
+      });
+
+      // Clear user input
+      $('#userInput').val('');
+    }
+  </script>
+</body>
+</html>
